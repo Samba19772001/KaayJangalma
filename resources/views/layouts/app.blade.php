@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'KaayJangalma') — Cours à domicile au Sénégal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --kj-green:  #1B7A4A;
+            --kj-yellow: #F5C518;
+            --kj-red:    #C0392B;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* ── Navbar ── */
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--kj-green) !important;
+        }
+        .nav-link:hover { color: var(--kj-green) !important; }
+
+        /* ── Boutons ── */
+        .btn-kj {
+            background: var(--kj-green);
+            color: #fff;
+            border: none;
+        }
+        .btn-kj:hover { background: #145c37; color: #fff; }
+
+        .btn-outline-kj {
+            border: 2px solid var(--kj-green);
+            color: var(--kj-green);
+            background: transparent;
+        }
+        .btn-outline-kj:hover {
+            background: var(--kj-green);
+            color: #fff;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            background: var(--kj-green);
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+        }
+        .sidebar .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2rem;
+        }
+        .sidebar a {
+            color: rgba(255,255,255,.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .65rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: .95rem;
+            transition: all .2s;
+        }
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(255,255,255,.15);
+            color: #fff;
+        }
+        .sidebar .sidebar-divider {
+            border-color: rgba(255,255,255,.2);
+            margin: 1rem 0;
+        }
+
+        /* ── Badges ── */
+        .badge-verified {
+            background: #d4edda;
+            color: #155724;
+            font-size: .72rem;
+            padding: .3rem .6rem;
+            border-radius: 20px;
+        }
+        .badge-premium {
+            background: #fff3cd;
+            color: #856404;
+            font-size: .72rem;
+            padding: .3rem .6rem;
+            border-radius: 20px;
+        }
+
+        /* ── Étoiles ── */
+        .stars { color: var(--kj-yellow); }
+
+        /* ── Cards ── */
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+        .card-header { border-radius: 12px 12px 0 0 !important; }
+
+        /* ── Stats cards ── */
+        .stat-card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: #fff;
+        }
+        .stat-card .stat-number { font-size: 2rem; font-weight: 700; }
+        .stat-card .stat-label  { font-size: .85rem; opacity: .85; }
+
+        /* ── Teacher card ── */
+        .teacher-card { transition: transform .2s, box-shadow .2s; cursor: pointer; }
+        .teacher-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+        .teacher-avatar {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--kj-green);
+        }
+        .teacher-avatar-placeholder {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: var(--kj-green);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 700;
+            border: 3px solid var(--kj-green);
+        }
+    </style>
+
+    @stack('styles')
+</head>
+<body>
+
+{{-- ── Navbar ── --}}
+<nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ route('home') }}">
+            <i class="bi bi-mortarboard-fill me-1" style="color: var(--kj-green)"></i>
+            KaayJangalma
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('search.index') }}">
+                        <i class="bi bi-search me-1"></i> Trouver un professeur
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2">
+                @guest
+                    <a href="{{ route('auth.login') }}" class="btn btn-outline-kj btn-sm px-3">
+                        Connexion
+                    </a>
+                    <a href="{{ route('auth.register') }}" class="btn btn-kj btn-sm px-3">
+                        Inscription
+                    </a>
+                @else
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                                data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            {{ Auth::user()->name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            @if(Auth::user()->isParent())
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('parent.dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Mon espace
+                                    </a>
+                                </li>
+                            @elseif(Auth::user()->isTeacher())
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('teacher.dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Mon espace
+                                    </a>
+                                </li>
+                            @elseif(Auth::user()->isAdmin())
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                        <i class="bi bi-shield-check me-2"></i>Administration
+                                    </a>
+                                </li>
+                            @endif
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('auth.logout') }}" method="POST">
+                                    @csrf
+                                    <button class="dropdown-item text-danger" type="submit">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @endguest
+            </div>
+        </div>
+    </div>
+</nav>
+
+{{-- ── Flash messages ── --}}
+@if(session('success'))
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show rounded-3">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+@endif
+
+@if(session('info'))
+    <div class="container mt-3">
+        <div class="alert alert-info alert-dismissible fade show rounded-3">
+            <i class="bi bi-info-circle me-2"></i>{{ session('info') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="container mt-3">
+        <div class="alert alert-danger alert-dismissible fade show rounded-3">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <ul class="mb-0 mt-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+@endif
+
+{{-- ── Contenu principal ── --}}
+@yield('content')
+
+{{-- ── Footer ── --}}
+<footer class="mt-5 py-4 bg-white border-top">
+    <div class="container text-center text-muted small">
+        <p class="mb-1">
+            <strong style="color: var(--kj-green)">KaayJangalma</strong> —
+            La plateforme de cours à domicile au Sénégal
+        </p>
+        <p class="mb-0">© {{ date('Y') }} Tous droits réservés</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
+</body>
+</html>
