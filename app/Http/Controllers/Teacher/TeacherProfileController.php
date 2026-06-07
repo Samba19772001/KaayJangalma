@@ -84,8 +84,8 @@ class TeacherProfileController extends Controller
 
         // Disponibilités
         $teacher->availabilities()->delete();
-        foreach ($request->days ?? [] as $day) {
-            foreach ($request->slots ?? [] as $slot) {
+        foreach ($request->availabilities ?? [] as $day => $slots) {
+            foreach ($slots as $slot) {
                 $teacher->availabilities()->create(['day' => $day, 'slot' => $slot]);
             }
         }
