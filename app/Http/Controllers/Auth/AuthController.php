@@ -143,10 +143,12 @@ class AuthController extends Controller
 
     private function redirectAfterLogin(User $user)
     {
-        return match ($user->role) {
-            'parent'  => redirect()->route('parent.dashboard'),
-            'teacher' => redirect()->route('teacher.dashboard'),
-            'admin'   => redirect()->route('admin.dashboard'),
-        };
+        if ($user->role === 'teacher') {
+            return redirect('/professeur/tableau-de-bord');
+        }
+        if ($user->role === 'parent') {
+            return redirect('/parent/tableau-de-bord');
+        }
+        return redirect('/admin/tableau-de-bord');
     }
 }

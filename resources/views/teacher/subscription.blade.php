@@ -1,14 +1,28 @@
 @extends('layouts.app')
 @section('title', 'Abonnement Premium')
 
+@section('sidebar_content')
+    <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
+    <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+    <a href="{{ route('teacher.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
+    <a href="{{ route('teacher.requests') }}"><i class="bi bi-inbox"></i> Demandes</a>
+    <a href="{{ route('teacher.stats') }}"><i class="bi bi-bar-chart"></i> Statistiques</a>
+    <a href="{{ route('teacher.subscription') }}" class="active"><i class="bi bi-star"></i> Abonnement Premium</a>
+    <hr class="sidebar-divider">
+    <form action="{{ route('auth.logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn p-0 w-100 text-start" style="color:rgba(255,255,255,.8)">
+            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+        </button>
+    </form>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2 px-0 d-none d-md-block">
             <div class="sidebar">
-                <a href="{{ route('home') }}" class="brand">
-                    <i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma
-                </a>
+                <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
                 <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
                 <a href="{{ route('teacher.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
                 <a href="{{ route('teacher.requests') }}"><i class="bi bi-inbox"></i> Demandes</a>
@@ -17,8 +31,7 @@
                 <hr class="sidebar-divider">
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn p-0 w-100 text-start"
-                            style="color:rgba(255,255,255,.8)">
+                    <button type="submit" class="btn p-0 w-100 text-start" style="color:rgba(255,255,255,.8)">
                         <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
                     </button>
                 </form>
@@ -45,7 +58,6 @@
                 </div>
             @endif
 
-            {{-- Offres --}}
             <div class="row g-4 mb-4" style="max-width:700px">
                 <div class="col-md-6">
                     <div class="card p-4 h-100 text-center">
@@ -66,14 +78,11 @@
                             <form action="{{ route('teacher.subscription.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="plan" value="quarterly">
-                                <button type="submit" class="btn btn-kj w-100 fw-semibold">
-                                    Souscrire
-                                </button>
+                                <button type="submit" class="btn btn-kj w-100 fw-semibold">Souscrire</button>
                             </form>
                         @endif
                     </div>
                 </div>
-
                 <div class="col-md-6">
                     <div class="card p-4 h-100 text-center border-2"
                          style="border-color:var(--kj-yellow) !important">
@@ -97,16 +106,13 @@
                             <form action="{{ route('teacher.subscription.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="plan" value="biannual">
-                                <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">
-                                    Souscrire
-                                </button>
+                                <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">Souscrire</button>
                             </form>
                         @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Historique --}}
             @if($history->count())
                 <div class="card">
                     <div class="card-header bg-white fw-bold py-3">
@@ -133,8 +139,8 @@
                                     <td class="small">{{ $sub->ends_at->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge {{
-                                            $sub->status === 'active'   ? 'bg-success'   :
-                                            ($sub->status === 'expired' ? 'bg-secondary'  : 'bg-danger')
+                                            $sub->status === 'active' ? 'bg-success' :
+                                            ($sub->status === 'expired' ? 'bg-secondary' : 'bg-danger')
                                         }}">
                                             {{ ['active'=>'Actif','expired'=>'Expiré','cancelled'=>'Annulé'][$sub->status] ?? $sub->status }}
                                         </span>
@@ -146,7 +152,6 @@
                     </div>
                 </div>
             @endif
-
         </div>
     </div>
 </div>

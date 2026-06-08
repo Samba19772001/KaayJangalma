@@ -31,7 +31,7 @@ Route::post('/deconnexion', [AuthController::class, 'logout'])
 
 // ─── Recherche publique ───────────────────────────────────────────
 Route::get('/recherche',         [SearchController::class, 'index'])->name('search.index');
-Route::get('/professeur/{id}',   [SearchController::class, 'show'])->name('teacher.public');
+
 
 // ─── Espace Parent ────────────────────────────────────────────────
 Route::middleware('auth')->prefix('parent')->name('parent.')->group(function () {
@@ -68,6 +68,8 @@ Route::middleware('auth')->prefix('professeur')->name('teacher.')->group(functio
     Route::get('/abonnement',        [TeacherDashboardController::class, 'subscription'])->name('subscription');
     Route::post('/abonnement',       [TeacherDashboardController::class, 'subscribe'])->name('subscription.store');
 });
+
+Route::get('/professeur/{id}',   [SearchController::class, 'show'])->name('teacher.public');
 
 // ─── Administration ───────────────────────────────────────────────
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {

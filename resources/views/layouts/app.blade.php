@@ -15,39 +15,19 @@
             --kj-yellow: #F5C518;
             --kj-red:    #C0392B;
         }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; }
 
         /* ── Navbar ── */
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--kj-green) !important;
-        }
+        .navbar-brand { font-weight: 800; font-size: 1.4rem; color: var(--kj-green) !important; }
         .nav-link:hover { color: var(--kj-green) !important; }
 
         /* ── Boutons ── */
-        .btn-kj {
-            background: var(--kj-green);
-            color: #fff;
-            border: none;
-        }
+        .btn-kj { background: var(--kj-green); color: #fff; border: none; }
         .btn-kj:hover { background: #145c37; color: #fff; }
+        .btn-outline-kj { border: 2px solid var(--kj-green); color: var(--kj-green); background: transparent; }
+        .btn-outline-kj:hover { background: var(--kj-green); color: #fff; }
 
-        .btn-outline-kj {
-            border: 2px solid var(--kj-green);
-            color: var(--kj-green);
-            background: transparent;
-        }
-        .btn-outline-kj:hover {
-            background: var(--kj-green);
-            color: #fff;
-        }
-
-        /* ── Sidebar ── */
+        /* ── Sidebar desktop ── */
         .sidebar {
             background: var(--kj-green);
             min-height: 100vh;
@@ -73,8 +53,7 @@
             font-size: .95rem;
             transition: all .2s;
         }
-        .sidebar a:hover,
-        .sidebar a.active {
+        .sidebar a:hover, .sidebar a.active {
             background: rgba(255,255,255,.15);
             color: #fff;
         }
@@ -83,21 +62,79 @@
             margin: 1rem 0;
         }
 
+        /* ── Sidebar mobile drawer ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,.5);
+            z-index: 1040;
+        }
+        .sidebar-drawer {
+            position: fixed;
+            top: 0; left: -280px;
+            width: 260px;
+            height: 100%;
+            background: var(--kj-green);
+            z-index: 1045;
+            padding: 1.5rem 1rem;
+            transition: left .3s ease;
+            overflow-y: auto;
+        }
+        .sidebar-drawer.open { left: 0; }
+        .sidebar-drawer .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2rem;
+        }
+        .sidebar-drawer a {
+            color: rgba(255,255,255,.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .65rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: .95rem;
+            transition: all .2s;
+        }
+        .sidebar-drawer a:hover, .sidebar-drawer a.active {
+            background: rgba(255,255,255,.15);
+            color: #fff;
+        }
+        .sidebar-drawer .sidebar-divider {
+            border-color: rgba(255,255,255,.2);
+            margin: 1rem 0;
+        }
+        .sidebar-mobile-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--kj-green);
+            color: #fff;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,.3);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (max-width: 767px) {
+            .sidebar-mobile-toggle { display: flex; }
+        }
+
         /* ── Badges ── */
-        .badge-verified {
-            background: #d4edda;
-            color: #155724;
-            font-size: .72rem;
-            padding: .3rem .6rem;
-            border-radius: 20px;
-        }
-        .badge-premium {
-            background: #fff3cd;
-            color: #856404;
-            font-size: .72rem;
-            padding: .3rem .6rem;
-            border-radius: 20px;
-        }
+        .badge-verified { background: #d4edda; color: #155724; font-size: .72rem; padding: .3rem .6rem; border-radius: 20px; }
+        .badge-premium  { background: #fff3cd; color: #856404; font-size: .72rem; padding: .3rem .6rem; border-radius: 20px; }
 
         /* ── Étoiles ── */
         .stars { color: var(--kj-yellow); }
@@ -107,28 +144,17 @@
         .card-header { border-radius: 12px 12px 0 0 !important; }
 
         /* ── Stats cards ── */
-        .stat-card {
-            border-radius: 12px;
-            padding: 1.5rem;
-            color: #fff;
-        }
+        .stat-card { border-radius: 12px; padding: 1.5rem; color: #fff; }
         .stat-card .stat-number { font-size: 2rem; font-weight: 700; }
         .stat-card .stat-label  { font-size: .85rem; opacity: .85; }
 
         /* ── Teacher card ── */
         .teacher-card { transition: transform .2s, box-shadow .2s; cursor: pointer; }
         .teacher-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
-        .teacher-avatar {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--kj-green);
-        }
+        .teacher-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--kj-green); }
         .teacher-avatar-placeholder {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            background: var(--kj-green);
-            color: #fff;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--kj-green); color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.6rem; font-weight: 700;
             border: 3px solid var(--kj-green);
@@ -143,14 +169,11 @@
 <nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
-            <i class="bi bi-mortarboard-fill me-1" style="color: var(--kj-green)"></i>
-            KaayJangalma
+            <i class="bi bi-mortarboard-fill me-1" style="color:var(--kj-green)"></i>KaayJangalma
         </a>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
@@ -159,41 +182,23 @@
                     </a>
                 </li>
             </ul>
-
             <div class="d-flex align-items-center gap-2">
                 @guest
-                    <a href="{{ route('auth.login') }}" class="btn btn-outline-kj btn-sm px-3">
-                        Connexion
-                    </a>
-                    <a href="{{ route('auth.register') }}" class="btn btn-kj btn-sm px-3">
-                        Inscription
-                    </a>
+                    <a href="{{ route('auth.login') }}" class="btn btn-outline-kj btn-sm px-3">Connexion</a>
+                    <a href="{{ route('auth.register') }}" class="btn btn-kj btn-sm px-3">Inscription</a>
                 @else
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
                                 data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i>
-                            {{ Auth::user()->name }}
+                            <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
                             @if(Auth::user()->isParent())
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('parent.dashboard') }}">
-                                        <i class="bi bi-speedometer2 me-2"></i>Mon espace
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ route('parent.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Mon espace</a></li>
                             @elseif(Auth::user()->isTeacher())
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('teacher.dashboard') }}">
-                                        <i class="bi bi-speedometer2 me-2"></i>Mon espace
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Mon espace</a></li>
                             @elseif(Auth::user()->isAdmin())
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                        <i class="bi bi-shield-check me-2"></i>Administration
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-shield-check me-2"></i>Administration</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -221,7 +226,6 @@
         </div>
     </div>
 @endif
-
 @if(session('info'))
     <div class="container mt-3">
         <div class="alert alert-info alert-dismissible fade show rounded-3">
@@ -230,7 +234,6 @@
         </div>
     </div>
 @endif
-
 @if($errors->any())
     <div class="container mt-3">
         <div class="alert alert-danger alert-dismissible fade show rounded-3">
@@ -248,18 +251,38 @@
 {{-- ── Contenu principal ── --}}
 @yield('content')
 
+{{-- ── Sidebar mobile drawer ── --}}
+@hasSection('sidebar_content')
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        @yield('sidebar_content')
+    </div>
+    <button class="sidebar-mobile-toggle" onclick="openSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+@endif
+
 {{-- ── Footer ── --}}
 <footer class="mt-5 py-4 bg-white border-top">
     <div class="container text-center text-muted small">
-        <p class="mb-1">
-            <strong style="color: var(--kj-green)">KaayJangalma</strong> —
-            La plateforme de cours à domicile au Sénégal
-        </p>
+        <p class="mb-1"><strong style="color:var(--kj-green)">KaayJangalma</strong> — La plateforme de cours à domicile au Sénégal</p>
         <p class="mb-0">© {{ date('Y') }} Tous droits réservés</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openSidebar() {
+    document.getElementById('sidebarDrawer').classList.add('open');
+    document.getElementById('sidebarOverlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    document.getElementById('sidebarDrawer').classList.remove('open');
+    document.getElementById('sidebarOverlay').style.display = 'none';
+    document.body.style.overflow = '';
+}
+</script>
 @stack('scripts')
 </body>
 </html>
