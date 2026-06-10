@@ -114,7 +114,12 @@
                             @forelse($teachers as $teacher)
                             <tr>
                                 <td data-label="Professeur">
+                                    <a href="{{ route('admin.teachers.show', $teacher->id) }}"
+                                        class="fw-semibold small text-decoration-none text-dark">
+                                            {{ $teacher->user->name }}
+                                    </a>
                                     <div class="d-flex align-items-center gap-2">
+                                        
                                         @if($teacher->photo)
                                             <img src="{{ asset('storage/'.$teacher->photo) }}"
                                                  class="rounded-circle"

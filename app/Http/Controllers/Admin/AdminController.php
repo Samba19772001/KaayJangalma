@@ -45,20 +45,19 @@ class AdminController extends Controller
     public function verifyTeacher(Request $request, $id)
     {
         $request->validate([
-            'status'     => 'required|in:verified,refused',
+            'status'     => 'required|in:verified,refused,pending',
             'admin_note' => 'nullable|string|max:500',
         ]);
 
         $teacher = TeacherProfile::findOrFail($id);
         $teacher->update(['verified_status' => $request->status]);
 
-        // Mettre à jour le statut des documents
         $teacher->documents()->update([
-            'status'     => $request->status,
+            'status'     => $request->status === 'pending' ? 'pending' : $request->status,
             'admin_note' => $request->admin_note,
         ]);
 
-        return back()->with('success', 'Statut du professeur mis à jour.');
+        return back()->with('success', 'Statut mis à jour avec succès.');
     }
 
     // ─── Matières ─────────────────────────────────────────────────
@@ -93,5 +92,12 @@ class AdminController extends Controller
     {
         Review::findOrFail($id)->delete();
         return back()->with('success', 'Avis supprimé.');
+    }
+
+    public function showTeacher($id)
+    {
+        $teacher = TeacherProfile::with('user', 'subjects', 'levels', 'zones', 'documents', 'reviews')
+                                ->findOrFail($id);
+        return view('admin.teacher-detail', compact('teacher'));
     }
 }

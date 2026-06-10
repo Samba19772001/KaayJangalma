@@ -187,6 +187,53 @@
                     <a href="{{ route('auth.login') }}" class="btn btn-outline-kj btn-sm px-3">Connexion</a>
                     <a href="{{ route('auth.register') }}" class="btn btn-kj btn-sm px-3">Inscription</a>
                 @else
+                    {{-- Compteur notifications --}}
+                    @php
+                        $unreadNotifs = Auth::check()
+                            ? \App\Models\Notification::where('user_id', Auth::id())
+                                                    ->whereNull('read_at')
+                                                    ->count()
+                            : 0;
+                        $unreadMessages = 0;
+                        if (Auth::check()) {
+                            if (Auth::user()->isParent() && Auth::user()->parentProfile) {
+                                $unreadMessages = \App\Models\Conversation::where('parent_id', Auth::user()->parentProfile->id)
+                                    ->withCount(['messages' => fn($q) => $q->where('is_read', false)->where('sender_id', '!=', Auth::id())])
+                                    ->get()->sum('messages_count');
+                            } elseif (Auth::user()->isTeacher() && Auth::user()->teacherProfile) {
+                                $unreadMessages = \App\Models\Conversation::where('teacher_id', Auth::user()->teacherProfile->id)
+                                    ->withCount(['messages' => fn($q) => $q->where('is_read', false)->where('sender_id', '!=', Auth::id())])
+                                    ->get()->sum('messages_count');
+                            }
+                        }
+                    @endphp
+
+                    {{-- Bouton Messages --}}
+                    @if(Auth::user()->isParent() || Auth::user()->isTeacher())
+                        <a href="{{ route('messages.index') }}"
+                        class="btn btn-sm btn-outline-secondary position-relative">
+                            <i class="bi bi-chat"></i>
+                            @if($unreadMessages > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="font-size:.6rem">
+                                    {{ $unreadMessages }}
+                                </span>
+                            @endif
+                        </a>
+                    @endif
+
+                    {{-- Bouton Notifications --}}
+                    <a href="{{ route('notifications.index') }}"
+                    class="btn btn-sm btn-outline-secondary position-relative">
+                        <i class="bi bi-bell"></i>
+                        @if($unreadNotifs > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size:.6rem">
+                                {{ $unreadNotifs }}
+                            </span>
+                        @endif
+                    </a>
+
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
                                 data-bs-toggle="dropdown">
@@ -195,11 +242,19 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow">
                             @if(Auth::user()->isParent())
                                 <li><a class="dropdown-item" href="{{ route('parent.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Mon espace</a></li>
+                                <li><a class="dropdown-item" href="{{ route('messages.index') }}"><i class="bi bi-chat me-2"></i>Messages</a></li>
                             @elseif(Auth::user()->isTeacher())
                                 <li><a class="dropdown-item" href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Mon espace</a></li>
+                                <li><a class="dropdown-item" href="{{ route('messages.index') }}"><i class="bi bi-chat me-2"></i>Messages</a></li>
                             @elseif(Auth::user()->isAdmin())
                                 <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-shield-check me-2"></i>Administration</a></li>
                             @endif
+                            <li><a class="dropdown-item" href="{{ route('notifications.index') }}">
+                                <i class="bi bi-bell me-2"></i>Notifications
+                                @if($unreadNotifs > 0)
+                                    <span class="badge bg-danger ms-1">{{ $unreadNotifs }}</span>
+                                @endif
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('auth.logout') }}" method="POST">
