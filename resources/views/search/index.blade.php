@@ -1,6 +1,29 @@
 @extends('layouts.app')
 @section('title', 'Rechercher un professeur')
-
+@section('sidebar_content')
+    <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
+    @auth
+        @if(Auth::user()->isParent())
+            <a href="{{ route('parent.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+            <a href="{{ route('parent.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
+            <a href="{{ route('search.index') }}" class="active"><i class="bi bi-search"></i> Rechercher</a>
+            <a href="{{ route('parent.favorites') }}"><i class="bi bi-heart"></i> Favoris</a>
+            <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+            <a href="{{ route('parent.announcements') }}"><i class="bi bi-megaphone"></i> Mes annonces</a>
+        @elseif(Auth::user()->isTeacher())
+            <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+            <a href="{{ route('teacher.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
+            <a href="{{ route('search.index') }}" class="active"><i class="bi bi-search"></i> Rechercher</a>
+        @endif
+        <hr class="sidebar-divider">
+        <form action="{{ route('auth.logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn p-0 w-100 text-start" style="color:rgba(255,255,255,.8)">
+                <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+            </button>
+        </form>
+    @endauth
+@endsection
 @section('content')
 <div class="container py-5">
 

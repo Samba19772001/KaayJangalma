@@ -67,7 +67,7 @@
         <div class="col-md-10 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h4 class="fw-bold mb-0">Bonjour, {{ Auth::user()->name }} 👋</h4>
+                    <h4 class="fw-bold mb-0">Bonjour, {{ Auth::user()->name }}</h4>
                     <p class="text-muted small mb-0">
                         Statut :
                         @if($teacher->verified_status === 'verified')

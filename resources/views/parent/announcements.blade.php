@@ -1,14 +1,29 @@
 @extends('layouts.app')
 @section('title', 'Mes annonces')
 
+@section('sidebar_content')
+    <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
+    <a href="{{ route('parent.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+    <a href="{{ route('parent.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
+    <a href="{{ route('search.index') }}"><i class="bi bi-search"></i> Rechercher</a>
+    <a href="{{ route('parent.favorites') }}"><i class="bi bi-heart"></i> Favoris</a>
+    <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+    <a href="{{ route('parent.announcements') }}" class="active"><i class="bi bi-megaphone"></i> Mes annonces</a>
+    <hr class="sidebar-divider">
+    <form action="{{ route('auth.logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn p-0 w-100 text-start" style="color:rgba(255,255,255,.8)">
+            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+        </button>
+    </form>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2 px-0 d-none d-md-block">
             <div class="sidebar">
-                <a href="{{ route('home') }}" class="brand">
-                    <i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma
-                </a>
+                <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
                 <a href="{{ route('parent.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
                 <a href="{{ route('parent.profile') }}"><i class="bi bi-person-circle"></i> Mon profil</a>
                 <a href="{{ route('search.index') }}"><i class="bi bi-search"></i> Rechercher</a>
@@ -18,8 +33,7 @@
                 <hr class="sidebar-divider">
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn p-0 w-100 text-start"
-                            style="color:rgba(255,255,255,.8)">
+                    <button type="submit" class="btn p-0 w-100 text-start" style="color:rgba(255,255,255,.8)">
                         <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
                     </button>
                 </form>
@@ -41,9 +55,7 @@
                 <div class="card text-center py-5">
                     <i class="bi bi-megaphone fs-1 text-muted d-block mb-3"></i>
                     <h5 class="text-muted">Aucune annonce publiée</h5>
-                    <p class="text-muted small">
-                        Publiez une annonce pour recevoir des propositions de professeurs.
-                    </p>
+                    <p class="text-muted small">Publiez une annonce pour recevoir des propositions de professeurs.</p>
                 </div>
             @else
                 <div class="row g-3">
@@ -51,15 +63,13 @@
                         <div class="col-md-6">
                             <div class="card p-3">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span class="badge" style="background:var(--kj-green)">
-                                        {{ $ann->subject->name }}
-                                    </span>
+                                    <span class="badge" style="background:var(--kj-green)">{{ $ann->subject->name }}</span>
                                     <span class="badge {{ $ann->is_active ? 'bg-success' : 'bg-secondary' }}">
                                         {{ $ann->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </div>
                                 <p class="mb-2 small">{{ $ann->description }}</p>
-                                <div class="small text-muted d-flex gap-3">
+                                <div class="small text-muted d-flex gap-3 flex-wrap">
                                     @if($ann->city)
                                         <span><i class="bi bi-geo-alt me-1"></i>{{ $ann->city }}</span>
                                     @endif
@@ -77,7 +87,6 @@
     </div>
 </div>
 
-{{-- Modal nouvelle annonce --}}
 <div class="modal fade" id="newAnnouncement" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -132,5 +141,4 @@
         </div>
     </div>
 </div>
-
 @endsection
