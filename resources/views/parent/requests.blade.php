@@ -108,7 +108,28 @@
                                     </td>
                                     <td class="small text-muted">{{ $req->created_at->format('d/m/Y') }}</td>
                                     <td>
-                                        @if($req->status === 'completed' && !$req->review)
+                                        @if($req->status === 'accepted')
+                                            <div class="d-flex gap-1 flex-wrap">
+                                                {{-- Message interne --}}
+                                                <form action="{{ route('messages.new', $req->teacher->id) }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="body"
+                                                           value="Bonjour {{ $req->teacher->user->name }}, suite à l'acceptation de ma demande de cours en {{ $req->subject->name }}, je souhaite planifier nos séances.">
+                                                    <button type="submit" class="btn btn-sm btn-kj">
+                                                        <i class="bi bi-chat me-1"></i>Message
+                                                    </button>
+                                                </form>
+                                                {{-- WhatsApp --}}
+                                                @if($req->teacher->whatsapp)
+                                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $req->teacher->whatsapp) }}"
+                                                       target="_blank"
+                                                       class="btn btn-sm btn-success">
+                                                        <i class="bi bi-whatsapp"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+
+                                        @elseif($req->status === 'completed' && !$req->review)
                                             <button class="btn btn-sm btn-outline-warning"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#reviewModal{{ $req->id }}">
@@ -147,19 +168,24 @@
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                                <button type="submit" class="btn btn-kj">Publier l'avis</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-kj">
+                                                                    Publier l'avis
+                                                                </button>
                                                             </div>
                                                         </form>
                                                     </div>
                                                 </div>
                                             </div>
+
                                         @elseif($req->review)
                                             <span class="stars small">
                                                 @for($i = 1; $i <= $req->review->rating; $i++)
                                                     <i class="bi bi-star-fill"></i>
                                                 @endfor
                                             </span>
+
                                         @else
                                             <span class="text-muted small">—</span>
                                         @endif

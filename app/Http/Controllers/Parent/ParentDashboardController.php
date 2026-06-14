@@ -103,6 +103,11 @@ class ParentDashboardController extends Controller
 
     public function storeRequest(Request $request)
     {
+        \Log::info('storeRequest appelé', [
+            'user' => Auth::user()?->name,
+            'role' => Auth::user()?->role,
+            'data' => $request->all(),
+        ]);
         $request->validate([
             'teacher_id' => 'required|exists:teacher_profiles,id',
             'subject_id' => 'required|exists:subjects,id',
@@ -114,7 +119,7 @@ class ParentDashboardController extends Controller
 
         $parent = $this->parentProfile();
 
-        CourseRequest::create([
+        $courseRequest = CourseRequest::create([
             'parent_id'  => $parent->id,
             'teacher_id' => $request->teacher_id,
             'subject_id' => $request->subject_id,
@@ -123,6 +128,21 @@ class ParentDashboardController extends Controller
             'address'    => $request->address,
             'message'    => $request->message,
             'status'     => 'sent',
+        ]);
+
+        // Récupérer le professeur
+        $teacher = \App\Models\TeacherProfile::findOrFail($request->teacher_id);
+
+        // Créer une notification pour le professeur
+        \App\Models\Notification::create([
+            'user_id' => $teacher->user_id,
+            'type'    => 'new_request',
+            'data'    => json_encode([
+                'message'    => 'Nouvelle demande de cours de '.$parent->user->name,
+                'parent'     => $parent->user->name,
+                'subject_id' => $request->subject_id,
+                'request_id' => $courseRequest->id,
+            ]),
         ]);
 
         return back()->with('success', 'Demande de cours envoyée avec succès.');

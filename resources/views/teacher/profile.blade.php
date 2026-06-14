@@ -8,6 +8,7 @@
     <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
     <a href="{{ route('teacher.profile') }}" class="active"><i class="bi bi-person-circle"></i> Mon profil</a>
     <a href="{{ route('teacher.requests') }}"><i class="bi bi-inbox"></i> Demandes</a>
+    <a href="{{ route('teacher.announcements') }}"><i class="bi bi-megaphone"></i> Annonces</a>
     <a href="{{ route('teacher.stats') }}"><i class="bi bi-bar-chart"></i> Statistiques</a>
     <a href="{{ route('teacher.subscription') }}"><i class="bi bi-star"></i> Abonnement Premium</a>
     <hr class="sidebar-divider">
@@ -28,6 +29,7 @@
                 <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
                 <a href="{{ route('teacher.profile') }}" class="active"><i class="bi bi-person-circle"></i> Mon profil</a>
                 <a href="{{ route('teacher.requests') }}"><i class="bi bi-inbox"></i> Demandes</a>
+                <a href="{{ route('teacher.announcements') }}"><i class="bi bi-megaphone"></i> Annonces</a>
                 <a href="{{ route('teacher.stats') }}"><i class="bi bi-bar-chart"></i> Statistiques</a>
                 <a href="{{ route('teacher.subscription') }}"><i class="bi bi-star"></i> Abonnement Premium</a>
                 <hr class="sidebar-divider">
@@ -43,75 +45,95 @@
         <div class="col-md-10 p-4">
             <h4 class="fw-bold mb-4">Mon profil professeur</h4>
 
-            <form action="{{ route('teacher.profile.update') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+            <div class="row g-4">
 
-                <div class="row g-4">
-                    <div class="col-md-4">
+                {{-- ── Colonne gauche ── --}}
+                <div class="col-md-4">
 
-                        {{-- Photo --}}
-                        <div class="card p-4 text-center mb-3">
+                    {{-- Photo (formulaire séparé) --}}
+                    <form action="{{ route('teacher.profile.update') }}" method="POST"
+                          enctype="multipart/form-data" class="mb-3">
+                        @csrf
+                        @method('PUT')
+                        <div class="card p-4 text-center">
                             @if($teacher->photo)
                                 <img src="{{ asset('storage/'.$teacher->photo) }}"
                                      class="rounded-circle mx-auto mb-3"
-                                     style="width:120px;height:120px;object-fit:cover;border:4px solid var(--kj-green)">
+                                     style="width:120px;height:120px;object-fit:cover;
+                                            border:4px solid var(--kj-green)">
                             @else
-                                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold"
-                                     style="width:120px;height:120px;background:var(--kj-green);font-size:3rem">
+                                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center
+                                            justify-content-center text-white fw-bold"
+                                     style="width:120px;height:120px;background:var(--kj-green);
+                                            font-size:3rem">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
                             @endif
-                            <label class="btn btn-sm btn-outline-secondary">
+                            <label class="btn btn-sm btn-outline-secondary mb-2">
                                 <i class="bi bi-camera me-1"></i> Changer la photo
-                                <input type="file" name="photo" class="d-none" accept="image/*">
+                                <input type="file" name="photo" class="d-none" accept="image/*"
+                                       onchange="this.closest('form').submit()">
                             </label>
                         </div>
+                    </form>
 
-                        {{-- Documents --}}
-                        <div class="card p-4">
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-file-earmark me-2" style="color:var(--kj-green)"></i>
-                                Documents justificatifs
-                            </h6>
-                            @foreach($teacher->documents as $doc)
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="small">
-                                        {{ ['cni'=>'CNI','diploma'=>'Diplôme','certificate'=>'Certificat'][$doc->type] ?? $doc->type }}
-                                    </span>
-                                    <span class="badge {{
-                                        $doc->status === 'verified' ? 'bg-success' :
-                                        ($doc->status === 'refused' ? 'bg-danger' : 'bg-warning text-dark')
-                                    }}">
-                                        {{ ['pending'=>'En attente','verified'=>'Vérifié','refused'=>'Refusé'][$doc->status] ?? $doc->status }}
-                                    </span>
-                                </div>
-                            @endforeach
-                            <hr>
-                            <p class="small text-muted mb-2">Ajouter un document :</p>
-                            <form action="{{ route('teacher.documents.upload') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="mb-2">
-                                    <select name="type" class="form-select form-select-sm" required>
-                                        <option value="">Type de document</option>
-                                        <option value="cni">CNI</option>
-                                        <option value="diploma">Diplôme</option>
-                                        <option value="certificate">Certificat</option>
-                                    </select>
-                                </div>
-                                <div class="mb-2">
-                                    <input type="file" name="file" class="form-control form-control-sm"
-                                           accept=".pdf,.jpg,.jpeg,.png" required>
-                                </div>
-                                <button type="submit" class="btn btn-sm btn-kj w-100">
-                                    <i class="bi bi-upload me-1"></i> Envoyer
-                                </button>
-                            </form>
-                        </div>
+                    {{-- Documents (formulaire séparé) --}}
+                    <div class="card p-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-file-earmark me-2" style="color:var(--kj-green)"></i>
+                            Documents justificatifs
+                        </h6>
 
+                        @forelse($teacher->documents as $doc)
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2
+                                        rounded" style="background:#f8f9fa">
+                                <span class="small fw-semibold">
+                                    {{ ['cni'=>'CNI','diploma'=>'Diplôme','certificate'=>'Certificat'][$doc->type] ?? $doc->type }}
+                                </span>
+                                <span class="badge {{
+                                    $doc->status === 'verified' ? 'bg-success' :
+                                    ($doc->status === 'refused' ? 'bg-danger' : 'bg-warning text-dark')
+                                }}">
+                                    {{ ['pending'=>'En attente','verified'=>'Vérifié','refused'=>'Refusé'][$doc->status] ?? $doc->status }}
+                                </span>
+                            </div>
+                        @empty
+                            <p class="small text-muted mb-2">Aucun document soumis.</p>
+                        @endforelse
+
+                        <hr>
+                        <p class="small text-muted mb-2">Ajouter un document :</p>
+
+                        {{-- Formulaire upload SÉPARÉ --}}
+                        <form action="{{ route('teacher.documents.upload') }}" method="POST"
+                              enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-2">
+                                <select name="type" class="form-select form-select-sm" required>
+                                    <option value="">Type de document</option>
+                                    <option value="cni">CNI</option>
+                                    <option value="diploma">Diplôme</option>
+                                    <option value="certificate">Certificat</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <input type="file" name="file" class="form-control form-control-sm"
+                                       accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-kj w-100">
+                                <i class="bi bi-upload me-1"></i> Envoyer
+                            </button>
+                        </form>
                     </div>
 
-                    <div class="col-md-8">
+                </div>
+
+                {{-- ── Colonne droite (formulaire principal) ── --}}
+                <div class="col-md-8">
+                    <form action="{{ route('teacher.profile.update') }}" method="POST"
+                          enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
                         {{-- Infos personnelles --}}
                         <div class="card p-4 mb-3">
@@ -141,7 +163,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">WhatsApp</label>
                                     <input type="tel" name="whatsapp" class="form-control"
-                                           value="{{ $teacher->whatsapp }}" placeholder="Ex : 77 000 00 00">
+                                           value="{{ $teacher->whatsapp }}"
+                                           placeholder="Ex : 77 000 00 00">
                                 </div>
                             </div>
                         </div>
@@ -156,12 +179,14 @@
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Niveau d'études</label>
                                     <input type="text" name="education_level" class="form-control"
-                                           value="{{ $teacher->education_level }}" placeholder="Ex : Master, Licence...">
+                                           value="{{ $teacher->education_level }}"
+                                           placeholder="Ex : Master, Licence...">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Université / Établissement</label>
                                     <input type="text" name="university" class="form-control"
-                                           value="{{ $teacher->university }}" placeholder="Ex : UCAD, UGB...">
+                                           value="{{ $teacher->university }}"
+                                           placeholder="Ex : UCAD, UGB...">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Années d'expérience</label>
@@ -171,12 +196,14 @@
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Tarif / heure (FCFA)</label>
                                     <input type="number" name="hourly_rate" class="form-control"
-                                           value="{{ $teacher->hourly_rate }}" placeholder="Ex : 3000">
+                                           value="{{ $teacher->hourly_rate }}"
+                                           placeholder="Ex : 3000">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Tarif / mois (FCFA)</label>
                                     <input type="number" name="monthly_rate" class="form-control"
-                                           value="{{ $teacher->monthly_rate }}" placeholder="Ex : 50000">
+                                           value="{{ $teacher->monthly_rate }}"
+                                           placeholder="Ex : 50000">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label small fw-semibold">Présentation</label>
@@ -200,7 +227,8 @@
                                                    name="subjects[]" value="{{ $subject->id }}"
                                                    id="subject_{{ $subject->id }}"
                                                    {{ $teacher->subjects->contains($subject->id) ? 'checked' : '' }}>
-                                            <label class="form-check-label small" for="subject_{{ $subject->id }}">
+                                            <label class="form-check-label small"
+                                                   for="subject_{{ $subject->id }}">
                                                 {{ $subject->name }}
                                             </label>
                                         </div>
@@ -222,7 +250,8 @@
                                                name="levels[]" value="{{ $key }}"
                                                id="level_{{ $key }}"
                                                {{ $teacher->levels->contains('level', $key) ? 'checked' : '' }}>
-                                        <label class="form-check-label small fw-semibold" for="level_{{ $key }}">
+                                        <label class="form-check-label small fw-semibold"
+                                               for="level_{{ $key }}">
                                             {{ $label }}
                                         </label>
                                     </div>
@@ -275,22 +304,26 @@
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Région</label>
                                     <input type="text" name="region" class="form-control"
-                                           value="{{ $teacher->zones->first()?->region }}" placeholder="Ex : Diourbel">
+                                           value="{{ $teacher->zones->first()?->region }}"
+                                           placeholder="Ex : Diourbel">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Département</label>
                                     <input type="text" name="department" class="form-control"
-                                           value="{{ $teacher->zones->first()?->department }}" placeholder="Ex : Mbacké">
+                                           value="{{ $teacher->zones->first()?->department }}"
+                                           placeholder="Ex : Mbacké">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Ville</label>
                                     <input type="text" name="city" class="form-control"
-                                           value="{{ $teacher->zones->first()?->city }}" placeholder="Ex : Touba">
+                                           value="{{ $teacher->zones->first()?->city }}"
+                                           placeholder="Ex : Touba">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-semibold">Quartier</label>
                                     <input type="text" name="neighborhood" class="form-control"
-                                           value="{{ $teacher->zones->first()?->neighborhood }}" placeholder="Ex : Ndamatou">
+                                           value="{{ $teacher->zones->first()?->neighborhood }}"
+                                           placeholder="Ex : Ndamatou">
                                 </div>
                             </div>
                         </div>
@@ -299,9 +332,9 @@
                             <i class="bi bi-check2 me-2"></i> Enregistrer le profil
                         </button>
 
-                    </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

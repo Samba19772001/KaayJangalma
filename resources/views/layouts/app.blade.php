@@ -31,7 +31,11 @@
         .sidebar {
             background: var(--kj-green);
             min-height: 100vh;
+            height: 100vh;
             padding: 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
         }
         .sidebar .brand {
             font-weight: 800;

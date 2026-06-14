@@ -60,6 +60,8 @@ Route::middleware(['auth', 'role:teacher'])->prefix('professeur')->name('teacher
     Route::get('/statistiques',     [TeacherDashboardController::class, 'stats'])->name('stats');
     Route::get('/abonnement',       [TeacherDashboardController::class, 'subscription'])->name('subscription');
     Route::post('/abonnement',      [TeacherDashboardController::class, 'subscribe'])->name('subscription.store');
+    Route::get('/annonces-publiques', [TeacherDashboardController::class, 'publicAnnouncements'])->name('announcements');
+    Route::post('/annonces-publiques/{id}/postuler', [TeacherDashboardController::class, 'applyAnnouncement'])->name('announcements.apply');
 });
 
 // ─── Messagerie (parent + professeur) ────────────────────────────
