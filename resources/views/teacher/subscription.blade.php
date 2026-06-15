@@ -60,14 +60,15 @@
                 </div>
             @endif
 
-            <div class="row g-4 mb-4" style="max-width:700px">
-                <div class="col-md-6">
+            <div class="row g-4 mb-4">
+                {{-- Trimestriel --}}
+                <div class="col-md-4">
                     <div class="card p-4 h-100 text-center">
                         <div class="mb-3">
                             <span class="badge bg-light text-dark border px-3 py-2">Trimestriel</span>
                         </div>
                         <div class="fs-2 fw-bold mb-1" style="color:var(--kj-green)">
-                            15 000 <span class="fs-6 fw-normal text-muted">FCFA</span>
+                            4 900 <span class="fs-6 fw-normal text-muted">FCFA</span>
                         </div>
                         <div class="text-muted small mb-3">pour 3 mois</div>
                         <ul class="list-unstyled text-start small mb-4">
@@ -80,21 +81,25 @@
                             <form action="{{ route('teacher.subscription.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="plan" value="quarterly">
-                                <button type="submit" class="btn btn-kj w-100 fw-semibold">Souscrire</button>
+                                <button type="submit" class="btn btn-kj w-100 fw-semibold">
+                                    Souscrire
+                                </button>
                             </form>
                         @endif
                     </div>
                 </div>
-                <div class="col-md-6">
+
+                {{-- Semestriel --}}
+                <div class="col-md-4">
                     <div class="card p-4 h-100 text-center border-2"
                          style="border-color:var(--kj-yellow) !important">
                         <div class="mb-3">
                             <span class="badge px-3 py-2" style="background:var(--kj-yellow);color:#333">
-                                ⭐ Meilleure offre
+                                Semestriel
                             </span>
                         </div>
                         <div class="fs-2 fw-bold mb-1" style="color:var(--kj-green)">
-                            25 000 <span class="fs-6 fw-normal text-muted">FCFA</span>
+                            7 900 <span class="fs-6 fw-normal text-muted">FCFA</span>
                         </div>
                         <div class="text-muted small mb-3">pour 6 mois</div>
                         <ul class="list-unstyled text-start small mb-4">
@@ -102,13 +107,50 @@
                             <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Badge Premium</li>
                             <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Mise en avant accueil</li>
                             <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Statistiques avancées</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Économisez 5 000 FCFA</li>
+                            
                         </ul>
                         @if(!$active)
                             <form action="{{ route('teacher.subscription.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="plan" value="biannual">
-                                <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">Souscrire</button>
+                                <button type="submit" class="btn w-100 fw-semibold text-white"
+                                        style="background:var(--kj-green)">
+                                    Souscrire
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Annuel --}}
+                <div class="col-md-4">
+                    <div class="card p-4 h-100 text-center border-2"
+                         style="border-color:var(--kj-green) !important;
+                                background:linear-gradient(135deg,rgba(27,122,74,.05),rgba(27,122,74,.1))">
+                        <div class="mb-3">
+                            <span class="badge px-3 py-2" style="background:var(--kj-green);color:#fff">
+                                 Offre Annuelle
+                            </span>
+                        </div>
+                        <div class="fs-2 fw-bold mb-1" style="color:var(--kj-green)">
+                            14 900 <span class="fs-6 fw-normal text-muted">FCFA</span>
+                        </div>
+                        <div class="text-muted small mb-3">pour 12 mois</div>
+                        <ul class="list-unstyled text-start small mb-4">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Profil prioritaire</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Badge Premium</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Mise en avant accueil</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Statistiques avancées</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Support prioritaire</li>
+                        </ul>
+                        @if(!$active)
+                            <form action="{{ route('teacher.subscription.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="plan" value="annual">
+                                <button type="submit" class="btn w-100 fw-semibold text-white"
+                                        style="background:var(--kj-green)">
+                                    Souscrire
+                                </button>
                             </form>
                         @endif
                     </div>
@@ -135,13 +177,15 @@
                             <tbody>
                                 @foreach($history as $sub)
                                 <tr>
-                                    <td>{{ $sub->plan === 'quarterly' ? 'Trimestriel' : 'Semestriel' }}</td>
+                                    <td>
+                                        {{ ['quarterly'=>'Trimestriel','biannual'=>'Semestriel','annual'=>'Annuel'][$sub->plan] ?? $sub->plan }}
+                                    </td>
                                     <td>{{ number_format($sub->amount, 0, ',', ' ') }} FCFA</td>
                                     <td class="small">{{ $sub->starts_at->format('d/m/Y') }}</td>
                                     <td class="small">{{ $sub->ends_at->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge {{
-                                            $sub->status === 'active' ? 'bg-success' :
+                                            $sub->status === 'active'   ? 'bg-success' :
                                             ($sub->status === 'expired' ? 'bg-secondary' : 'bg-danger')
                                         }}">
                                             {{ ['active'=>'Actif','expired'=>'Expiré','cancelled'=>'Annulé'][$sub->status] ?? $sub->status }}
@@ -154,6 +198,7 @@
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
 </div>

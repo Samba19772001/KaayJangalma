@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\CourseRequest;
+use App\Models\Subscription;
+use App\Models\PublicAnnouncement;
+use App\Models\AnnouncementApplication;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -114,7 +119,34 @@ class TeacherDashboardController extends Controller
 
     public function subscribe(Request $request)
     {
-        return back()->with('success', 'Abonnement activé.');
+        $request->validate(['plan' => 'required|in:quarterly,biannual,annual']);
+
+        $teacher = Auth::user()->teacherProfile;
+
+        if ($teacher->activeSubscription()->exists()) {
+            return back()->withErrors(['plan' => 'Vous avez déjà un abonnement actif.']);
+        }
+
+        $plans = [
+            'quarterly' => ['months' => 3,  'amount' => 4900],
+            'biannual'  => ['months' => 6,  'amount' => 7900],
+            'annual'    => ['months' => 12, 'amount' => 14900],
+        ];
+
+        $plan = $plans[$request->plan];
+
+        Subscription::create([
+            'teacher_id' => $teacher->id,
+            'plan'       => $request->plan,
+            'amount'     => $plan['amount'],
+            'starts_at'  => now(),
+            'ends_at'    => now()->addMonths($plan['months']),
+            'status'     => 'active',
+        ]);
+
+        $teacher->update(['is_premium' => true]);
+
+        return back()->with('success', 'Abonnement Premium activé avec succès !');
     }
 
     public function publicAnnouncements()
