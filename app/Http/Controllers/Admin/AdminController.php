@@ -100,4 +100,74 @@ class AdminController extends Controller
                                 ->findOrFail($id);
         return view('admin.teacher-detail', compact('teacher'));
     }
+
+    public function payments()
+    {
+        $pending   = \App\Models\Subscription::with('teacher.user')
+                                            ->where('status', 'pending_payment')
+                                            ->latest()
+                                            ->get();
+
+        $confirmed = \App\Models\Subscription::with('teacher.user', 'confirmedBy')
+                                            ->where('status', 'active')
+                                            ->latest()
+                                            ->take(20)
+                                            ->get();
+
+        return view('admin.payments', compact('pending', 'confirmed'));
+    }
+
+    public function confirmPayment(Request $request, $id)
+    {
+        $request->validate([
+            'action'       => 'required|in:confirm,reject',
+            'payment_note' => 'nullable|string|max:500',
+        ]);
+
+        $subscription = \App\Models\Subscription::with('teacher.user')->findOrFail($id);
+
+        if ($request->action === 'confirm') {
+            $subscription->update([
+                'status'                => 'active',
+                'payment_confirmed_at'  => now(),
+                'confirmed_by'          => Auth::id(),
+                'payment_note'          => $request->payment_note,
+            ]);
+
+            // Activer le premium du professeur
+            $subscription->teacher->update(['is_premium' => true]);
+
+            // Notification au professeur
+            \App\Models\Notification::create([
+                'user_id' => $subscription->teacher->user_id,
+                'type'    => 'payment_confirmed',
+                'data'    => json_encode([
+                    'message' => 'Votre paiement a été confirmé ! Abonnement Premium activé.',
+                    'plan'    => $subscription->plan,
+                    'ends_at' => $subscription->ends_at->format('d/m/Y'),
+                ]),
+            ]);
+
+            $msg = 'Paiement confirmé et abonnement activé !';
+        } else {
+            $subscription->update([
+                'status'       => 'cancelled',
+                'payment_note' => $request->payment_note,
+            ]);
+
+            // Notification au professeur
+            \App\Models\Notification::create([
+                'user_id' => $subscription->teacher->user_id,
+                'type'    => 'payment_rejected',
+                'data'    => json_encode([
+                    'message' => 'Votre paiement n\'a pas pu être confirmé. Contactez l\'admin.',
+                    'note'    => $request->payment_note,
+                ]),
+            ]);
+
+            $msg = 'Paiement rejeté.';
+        }
+
+        return back()->with('success', $msg);
+    }
 }

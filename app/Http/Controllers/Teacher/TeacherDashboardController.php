@@ -119,34 +119,62 @@ class TeacherDashboardController extends Controller
 
     public function subscribe(Request $request)
     {
-        $request->validate(['plan' => 'required|in:quarterly,biannual,annual']);
+        $request->validate([
+            'plan'              => 'required|in:quarterly,biannual,annual',
+            'payment_method'    => 'required|in:wave,orange_money,virement',
+            'payment_reference' => 'required|string|max:100',
+        ]);
 
         $teacher = Auth::user()->teacherProfile;
 
-        if ($teacher->activeSubscription()->exists()) {
-            return back()->withErrors(['plan' => 'Vous avez déjà un abonnement actif.']);
+        // Vérifier qu'il n'y a pas déjà un abonnement actif ou en attente
+        $existing = Subscription::where('teacher_id', $teacher->id)
+                                ->whereIn('status', ['active', 'pending_payment'])
+                                ->first();
+
+        if ($existing) {
+            if ($existing->status === 'active') {
+                return back()->withErrors(['plan' => 'Vous avez déjà un abonnement actif.']);
+            }
+            return back()->withErrors(['plan' => 'Vous avez déjà une demande en attente de confirmation.']);
         }
 
         $plans = [
-            'quarterly' => ['months' => 3,  'amount' => 4900],
-            'biannual'  => ['months' => 6,  'amount' => 7900],
+            'quarterly' => ['months' => 3,  'amount' => 5900],
+            'biannual'  => ['months' => 6,  'amount' => 9900],
             'annual'    => ['months' => 12, 'amount' => 14900],
         ];
 
         $plan = $plans[$request->plan];
 
         Subscription::create([
-            'teacher_id' => $teacher->id,
-            'plan'       => $request->plan,
-            'amount'     => $plan['amount'],
-            'starts_at'  => now(),
-            'ends_at'    => now()->addMonths($plan['months']),
-            'status'     => 'active',
+            'teacher_id'        => $teacher->id,
+            'plan'              => $request->plan,
+            'amount'            => $plan['amount'],
+            'starts_at'         => now(),
+            'ends_at'           => now()->addMonths($plan['months']),
+            'status'            => 'pending_payment',
+            'payment_method'    => $request->payment_method,
+            'payment_reference' => $request->payment_reference,
         ]);
 
-        $teacher->update(['is_premium' => true]);
+        // Notification à l'admin
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            \App\Models\Notification::create([
+                'user_id' => $admin->id,
+                'type'    => 'new_payment',
+                'data'    => json_encode([
+                    'message'   => $teacher->user->name.' a soumis un paiement Premium ('.$request->payment_method.')',
+                    'teacher'   => $teacher->user->name,
+                    'plan'      => $request->plan,
+                    'amount'    => $plan['amount'],
+                    'reference' => $request->payment_reference,
+                ]),
+            ]);
+        }
 
-        return back()->with('success', 'Abonnement Premium activé avec succès !');
+        return back()->with('success', 'Votre demande d\'abonnement a été soumise. L\'admin confirmera votre paiement sous 24h.');
     }
 
     public function publicAnnouncements()

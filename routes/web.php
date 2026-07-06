@@ -95,6 +95,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/matieres/{id}',    [AdminController::class, 'toggleSubject'])->name('subjects.toggle');
     Route::get('/avis',               [AdminController::class, 'reviews'])->name('reviews');
     Route::delete('/avis/{id}',       [AdminController::class, 'deleteReview'])->name('reviews.delete');
+    Route::get('/paiements',          [AdminController::class, 'payments'])->name('payments');
+    Route::patch('/paiements/{id}',   [AdminController::class, 'confirmPayment'])->name('payments.confirm');
 });
 
 // ─── Profil public professeur (après les routes authentifiées) ────
