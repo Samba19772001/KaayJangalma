@@ -10,6 +10,7 @@ use App\Models\TeacherZone;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TeacherProfileController extends Controller
 {
@@ -121,5 +122,21 @@ class TeacherProfileController extends Controller
         ]);
 
         return back()->with('success', 'Document envoyé. En attente de validation.');
+    }
+
+    public function deleteDocument($id)
+    {
+        $teacher  = $this->teacherProfile();
+        $document = Document::where('id', $id)
+            ->where('teacher_id', $teacher->id)
+            ->firstOrFail();
+
+        if (Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+        }
+
+        $document->delete();
+
+        return back()->with('success', 'Document supprimé avec succès.');
     }
 }

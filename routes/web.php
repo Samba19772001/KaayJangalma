@@ -55,6 +55,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('professeur')->name('teacher
     Route::get('/profil',           [TeacherProfileController::class, 'edit'])->name('profile');
     Route::put('/profil',           [TeacherProfileController::class, 'update'])->name('profile.update');
     Route::post('/documents',       [TeacherProfileController::class, 'uploadDocuments'])->name('documents.upload');
+    Route::delete('/documents/{id}', [TeacherProfileController::class, 'deleteDocument'])->name('documents.destroy');
     Route::get('/demandes',         [TeacherDashboardController::class, 'requests'])->name('requests');
     Route::patch('/demandes/{id}',  [TeacherDashboardController::class, 'updateRequest'])->name('requests.update');
     Route::get('/statistiques',     [TeacherDashboardController::class, 'stats'])->name('stats');

@@ -96,6 +96,20 @@
                                 }}">
                                     {{ ['pending'=>'En attente','verified'=>'Vérifié','refused'=>'Refusé'][$doc->status] ?? $doc->status }}
                                 </span>
+                                <a href="{{ asset('storage/'.$doc->file_path) }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye me-1"></i>Voir
+                                </a>
+
+                                <form action="{{ route('teacher.documents.destroy', $doc->id) }}" method="POST"
+                                    onsubmit="return confirm('Supprimer ce document ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         @empty
                             <p class="small text-muted mb-2">Aucun document soumis.</p>

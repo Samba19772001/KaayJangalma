@@ -10,6 +10,7 @@ use App\Models\Subject;
 use App\Models\CourseRequest;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {

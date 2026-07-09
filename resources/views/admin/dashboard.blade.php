@@ -7,6 +7,7 @@
     <a href="{{ route('admin.teachers') }}"><i class="bi bi-people"></i> Professeurs</a>
     <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
     <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>
+    <a href="{{ route('admin.payments') }}"><i class="bi bi-credit-card"></i> Paiements</a>
     <hr class="sidebar-divider">
     <form action="{{ route('auth.logout') }}" method="POST">
         @csrf
@@ -26,6 +27,7 @@
                 <a href="{{ route('admin.teachers') }}"><i class="bi bi-people"></i> Professeurs</a>
                 <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
                 <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>
+                <a href="{{ route('admin.payments') }}"><i class="bi bi-credit-card"></i> Paiements</a>
                 <hr class="sidebar-divider">
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
