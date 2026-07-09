@@ -9,6 +9,7 @@
             <a href="{{ route('search.index') }}" class="active"><i class="bi bi-search"></i> Rechercher</a>
             <a href="{{ route('parent.favorites') }}"><i class="bi bi-heart"></i> Favoris</a>
             <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+            <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
             <a href="{{ route('parent.announcements') }}"><i class="bi bi-megaphone"></i> Mes annonces</a>
         @elseif(Auth::user()->isTeacher())
             <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
@@ -39,6 +40,7 @@
                         <a href="{{ route('search.index') }}" class="active"><i class="bi bi-search"></i> Rechercher</a>
                         <a href="{{ route('parent.favorites') }}"><i class="bi bi-heart"></i> Favoris</a>
                         <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+                        <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
                         <a href="{{ route('parent.announcements') }}"><i class="bi bi-megaphone"></i> Mes annonces</a>
                     @elseif(Auth::user()->isTeacher())
                         <a href="{{ route('teacher.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
@@ -128,6 +130,13 @@
 
                         @auth
                             @if(Auth::user()->isParent())
+                                {{-- Bouton Message --}}
+                                <button class="btn btn-outline-secondary w-100 mb-2 fw-semibold"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#messageModal">
+                                    <i class="bi bi-chat me-2"></i>Envoyer un message
+                                </button>
+                                {{-- Ajouter aux favoris --}}
                                 <form action="{{ route('parent.favorites.toggle', $teacher->id) }}"
                                       method="POST" class="mb-2">
                                     @csrf
@@ -139,6 +148,10 @@
                                     </button>
                                 </form>
                             @endif
+                        @else
+                            <a href="{{ route('auth.login') }}" class="btn btn-outline-secondary w-100 mb-2">
+                                <i class="bi bi-chat me-2"></i>Envoyer un message
+                            </a>
                         @endauth
                     </div>
 
@@ -350,15 +363,46 @@
                         @endif
                     </div>
 
-                </div>
-                {{-- fin col-md-8 --}}
-
+                </div>  
             </div>
-            {{-- fin row interne --}}
         </div>
-        {{-- fin col-md-10 --}}
-
     </div>
-    {{-- fin row parent --}}
 </div>
+
+{{-- Modal message --}}
+@auth
+    @if(Auth::user()->isParent())
+        <div class="modal fade" id="messageModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-chat me-2"></i>
+                            Message à {{ $teacher->user->name }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="{{ route('messages.new', $teacher->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Votre message</label>
+                                <textarea name="body" class="form-control" rows="4"
+                                          placeholder="Bonjour, je suis intéressé par vos cours de..."
+                                          required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-kj fw-semibold">
+                                <i class="bi bi-send me-1"></i>Envoyer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endauth
 @endsection

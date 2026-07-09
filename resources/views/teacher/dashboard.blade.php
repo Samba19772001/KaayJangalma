@@ -14,6 +14,7 @@
     <a href="{{ route('teacher.requests') }}">
         <i class="bi bi-inbox"></i> Demandes
     </a>
+    <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
     <a href="{{ route('teacher.announcements') }}"><i class="bi bi-megaphone"></i> Annonces</a>
     <a href="{{ route('teacher.stats') }}">
         <i class="bi bi-bar-chart"></i> Statistiques
@@ -48,6 +49,7 @@
                 <a href="{{ route('teacher.requests') }}">
                     <i class="bi bi-inbox"></i> Demandes
                 </a>
+                <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
                 <a href="{{ route('teacher.announcements') }}">
                     <i class="bi bi-megaphone"></i> Annonces
                 </a>

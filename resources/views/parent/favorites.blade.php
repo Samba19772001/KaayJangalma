@@ -8,6 +8,7 @@
     <a href="{{ route('search.index') }}"><i class="bi bi-search"></i> Rechercher</a>
     <a href="{{ route('parent.favorites') }}" class="active"><i class="bi bi-heart"></i> Favoris</a>
     <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+    <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
     <a href="{{ route('parent.announcements') }}"><i class="bi bi-megaphone"></i> Mes annonces</a>
     <hr class="sidebar-divider">
     <form action="{{ route('auth.logout') }}" method="POST">
@@ -29,6 +30,7 @@
                 <a href="{{ route('search.index') }}"><i class="bi bi-search"></i> Rechercher</a>
                 <a href="{{ route('parent.favorites') }}" class="active"><i class="bi bi-heart"></i> Favoris</a>
                 <a href="{{ route('parent.requests') }}"><i class="bi bi-send"></i> Mes demandes</a>
+                <a href="{{ route('messages.index') }}"><i class="bi bi-chat"></i> Messages</a>
                 <a href="{{ route('parent.announcements') }}"><i class="bi bi-megaphone"></i> Mes annonces</a>
                 <hr class="sidebar-divider">
                 <form action="{{ route('auth.logout') }}" method="POST">

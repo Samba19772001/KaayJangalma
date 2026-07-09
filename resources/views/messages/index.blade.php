@@ -109,24 +109,24 @@
                                 @endif
 
                                 {{-- Contenu --}}
-                                <div class="flex-grow-1 min-width-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold text-dark {{ $unread ? 'fw-bolder' : '' }}">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="d-flex justify-content-between align-items-center gap-2">
+                                        <span class="fw-bold text-dark text-truncate {{ $unread ? 'fw-bolder' : '' }}">
                                             {{ $otherName }}
                                         </span>
                                         @if($conv->last_message_at)
-                                            <span class="text-muted small">
+                                            <span class="text-muted small flex-shrink-0">
                                                 {{ $conv->last_message_at->diffForHumans() }}
                                             </span>
                                         @endif
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="text-muted small mb-0 text-truncate" style="max-width:300px">
-                                            {{ $lastMsg ? $lastMsg->body : 'Aucun message' }}
+                                    <div class="d-flex justify-content-between align-items-center gap-2">
+                                        <p class="text-muted small mb-0 text-truncate flex-grow-1">
+                                            {{ $lastMsg ? Str::limit($lastMsg->body, 40) : 'Aucun message' }}
                                         </p>
                                         @if($unread)
-                                            <span class="badge rounded-pill ms-2"
-                                                  style="background:var(--kj-green)">
+                                            <span class="badge rounded-pill flex-shrink-0"
+                                                style="background:var(--kj-green)">
                                                 {{ $unread }}
                                             </span>
                                         @endif

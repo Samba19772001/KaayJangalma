@@ -20,6 +20,9 @@
     <a href="{{ route('parent.requests') }}">
         <i class="bi bi-send"></i> Mes demandes
     </a>
+    <a href="{{ route('messages.index') }}">
+        <i class="bi bi-chat"></i> Messages
+    </a>
     <a href="{{ route('parent.announcements') }}">
         <i class="bi bi-megaphone"></i> Mes annonces
     </a>
@@ -55,6 +58,9 @@
                 </a>
                 <a href="{{ route('parent.requests') }}">
                     <i class="bi bi-send"></i> Mes demandes
+                </a>
+                <a href="{{ route('messages.index') }}">
+                    <i class="bi bi-chat"></i> Messages
                 </a>
                 <a href="{{ route('parent.announcements') }}">
                     <i class="bi bi-megaphone"></i> Mes annonces
