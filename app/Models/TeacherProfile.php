@@ -10,12 +10,13 @@ class TeacherProfile extends Model
         'user_id', 'photo', 'gender', 'birth_date', 'whatsapp',
         'education_level', 'university', 'bio', 'experience_years',
         'hourly_rate', 'monthly_rate', 'verified_status', 'is_premium',
-        'average_rating', 'total_reviews', 'profile_views', 'whatsapp_clicks',
+        'is_top', 'average_rating', 'total_reviews', 'profile_views', 'whatsapp_clicks',
     ];
 
     protected $casts = [
         'birth_date'     => 'date',
         'is_premium'     => 'boolean',
+        'is_top'         => 'boolean',
         'hourly_rate'    => 'decimal:2',
         'monthly_rate'   => 'decimal:2',
         'average_rating' => 'float',
@@ -55,5 +56,19 @@ class TeacherProfile extends Model
             'average_rating' => round($this->reviews()->avg('rating') ?? 0, 2),
             'total_reviews'  => $this->reviews()->count(),
         ]);
+    }
+
+    public function recalculateTopStatus(): void
+    {
+        $completedRequests = $this->courseRequests()
+                                ->where('status', 'completed')
+                                ->count();
+
+        $isTop = $this->verified_status === 'verified'
+            && $this->average_rating >= 4.5
+            && $this->total_reviews >= 5
+            && $completedRequests >= 3;
+
+        $this->update(['is_top' => $isTop]);
     }
 }

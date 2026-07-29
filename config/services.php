@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'paytech' => [
+        'api_key'    => env('PAYTECH_API_KEY'),
+        'api_secret' => env('PAYTECH_API_SECRET'),
+        'env'        => env('PAYTECH_ENV', 'prod'),
+    ],
+
 ];

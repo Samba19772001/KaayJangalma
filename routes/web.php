@@ -12,6 +12,10 @@ use App\Http\Controllers\NotificationController;
 
 // ─── Accueil ──────────────────────────────────────────────────────
 Route::get('/', fn() => view('welcome'))->name('home');
+// ─── PayTech ──────────────────────────────────────────────────────
+Route::post('/paytech/ipn',     [\App\Http\Controllers\PayTechController::class, 'ipn'])->name('paytech.ipn');
+Route::get('/paytech/success',  [\App\Http\Controllers\PayTechController::class, 'success'])->name('paytech.success');
+Route::get('/paytech/cancel',   [\App\Http\Controllers\PayTechController::class, 'cancel'])->name('paytech.cancel');
 
 // ─── Test ─────────────────────────────────────────────────────────
 Route::get('/test', function () { return 'Laravel fonctionne !'; });

@@ -82,7 +82,7 @@
                 </div>
             @endif
 
-            {{-- Coordonnées bancaires --}}
+             {{-- Coordonnées bancaires --}}
             <div class="card p-4 mb-4" style="border-left: 4px solid var(--kj-green)">
                 <h6 class="fw-bold mb-3">
                     <i class="bi bi-bank me-2" style="color:var(--kj-green)"></i>
@@ -107,15 +107,7 @@
                             <div class="text-muted">Nom : <strong>KaayJangalma</strong></div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="p-3 rounded" style="background:#f8f9fa">
-                            <div class="fw-bold mb-1">
-                                <i class="bi bi-building me-1" style="color:#2980b9"></i>Virement bancaire
-                            </div>
-                            <div class="text-muted">Banque : <strong>CBAO</strong></div>
-                            <div class="text-muted">IBAN : <strong>SN XX XXXX XXXX</strong></div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="alert alert-info small mt-3 mb-0">
                     <i class="bi bi-info-circle me-1"></i>
@@ -132,7 +124,7 @@
                     <div class="col-md-4">
                         <div class="card p-4 h-100 text-center">
                             <div class="mb-3">
-                                <span class="badge bg-light text-dark border px-3 py-2">Trimestriel</span>
+                                <span class="badge bg-light text-dark border px-3 py-2">Offre Trimestriel</span>
                             </div>
                             <div class="fs-2 fw-bold mb-1" style="color:var(--kj-green)">
                                 5 900 <span class="fs-6 fw-normal text-muted">FCFA</span>
@@ -197,6 +189,7 @@
                                 <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Badge Premium</li>
                                 <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Mise en avant accueil</li>
                                 <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Statistiques avancées</li>
+                               
                                 <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Support prioritaire</li>
                             </ul>
                             <button class="btn w-100 fw-semibold text-white"

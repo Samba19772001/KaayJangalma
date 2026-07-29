@@ -117,6 +117,76 @@ class TeacherDashboardController extends Controller
         return view('teacher.subscription', compact('teacher', 'active', 'history'));
     }
 
+    /*public function subscribe(Request $request)
+    {
+        $request->validate([
+            'plan' => 'required|in:quarterly,biannual,annual',
+        ]);
+
+        $teacher = Auth::user()->teacherProfile;
+
+        // Vérifier qu'il n'y a pas déjà un abonnement actif ou en attente
+        $existing = Subscription::where('teacher_id', $teacher->id)
+                                ->whereIn('status', ['active', 'pending_payment'])
+                                ->first();
+
+        if ($existing) {
+            if ($existing->status === 'active') {
+                return back()->withErrors(['plan' => 'Vous avez déjà un abonnement actif.']);
+            }
+            return back()->withErrors(['plan' => 'Vous avez déjà une demande en attente de confirmation.']);
+        }
+
+        $plans = [
+            'quarterly' => ['months' => 3,  'amount' => 5900, 'label' => 'Abonnement Trimestriel'],
+            'biannual'  => ['months' => 6,  'amount' => 9900, 'label' => 'Abonnement Semestriel'],
+            'annual'    => ['months' => 12, 'amount' => 14900, 'label' => 'Abonnement Annuel'],
+        ];
+
+        $plan = $plans[$request->plan];
+
+        // Générer une référence unique
+        $refCommand = 'KJ-' . strtoupper($request->plan) . '-' . $teacher->id . '-' . time();
+
+        // Créer l'abonnement en attente
+        $subscription = Subscription::create([
+            'teacher_id'        => $teacher->id,
+            'plan'              => $request->plan,
+            'amount'            => $plan['amount'],
+            'starts_at'         => now(),
+            'ends_at'           => now()->addMonths($plan['months']),
+            'status'            => 'pending_payment',
+            'payment_method'    => 'paytech',
+            'payment_reference' => $refCommand,
+        ]);
+
+        // Appeler PayTech
+        $paytech  = new \App\Services\PayTechService();
+        $response = $paytech->requestPayment([
+            'item_name'    => $plan['label'],
+            'item_price'   => $plan['amount'],
+            'ref_command'  => $refCommand,
+            'command_name' => $plan['label'] . ' - KaayJangalma',
+            'custom_field' => [
+                'subscription_id' => $subscription->id,
+                'teacher_id'      => $teacher->id,
+            ],
+        ]);
+
+        // Vérifier la réponse PayTech
+        if (isset($response['success']) && $response['success'] == 1) {
+            return redirect($response['redirect_url']);
+        }
+
+        // En cas d'erreur PayTech
+        $subscription->delete();
+
+        return back()->withErrors([
+            'plan' => 'Erreur lors de la connexion avec PayTech. Veuillez réessayer. ' .
+                    ($response['message'] ?? '')
+        ]);
+    }*/
+
     public function subscribe(Request $request)
     {
         $request->validate([
