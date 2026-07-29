@@ -67,6 +67,11 @@ class TeacherDashboardController extends Controller
 
         $courseRequest->update(['status' => $request->status]);
 
+        // Recalculer le badge Top si cours terminé
+        if ($request->status === 'completed') {
+            $teacher->recalculateTopStatus();
+        }
+
         // Notification au parent
         $messages = [
             'accepted'  => 'Votre demande de cours a été acceptée par '.$teacher->user->name,
@@ -92,7 +97,7 @@ class TeacherDashboardController extends Controller
 
         return back()->with('success', $labels[$request->status]);
     }
-
+    
     public function stats()
     {
         $teacher = Auth::user()->teacherProfile;

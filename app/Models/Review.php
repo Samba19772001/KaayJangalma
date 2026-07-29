@@ -19,9 +19,12 @@ class Review extends Model
     {
         static::saved(function (Review $review) {
             $review->teacher->recalculateRating();
+            $review->teacher->recalculateTopStatus();
         });
+
         static::deleted(function (Review $review) {
             $review->teacher->recalculateRating();
+            $review->teacher->recalculateTopStatus();
         });
     }
 }

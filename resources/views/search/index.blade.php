@@ -174,7 +174,12 @@
 
                                         {{-- Badges --}}
                                         <div class="d-flex justify-content-between mb-2">
-                                            <div class="d-flex gap-1">
+                                            <div class="d-flex gap-1 flex-wrap">
+                                                @if($teacher->is_top)
+                                                    <span class="badge-top">
+                                                        🏆 Top Professeur
+                                                    </span>
+                                                @endif
                                                 @if($teacher->is_premium)
                                                     <span class="badge-premium">
                                                         <i class="bi bi-star-fill me-1"></i>Premium

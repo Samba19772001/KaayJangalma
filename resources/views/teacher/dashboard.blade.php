@@ -77,14 +77,23 @@
                     <p class="text-muted small mb-0">
                         Statut :
                         @if($teacher->verified_status === 'verified')
-                            <span class="badge-verified"><i class="bi bi-patch-check-fill me-1"></i>Vérifié</span>
+                            <span class="badge-verified">
+                                <i class="bi bi-patch-check-fill me-1"></i>Vérifié
+                            </span>
                         @elseif($teacher->verified_status === 'pending')
                             <span class="badge bg-warning text-dark">En attente de validation</span>
                         @else
                             <span class="badge bg-danger">Refusé</span>
                         @endif
                         @if($teacher->is_premium)
-                            <span class="badge-premium ms-1"><i class="bi bi-star-fill me-1"></i>Premium</span>
+                            <span class="badge-premium ms-1">
+                                <i class="bi bi-star-fill me-1"></i>Premium
+                            </span>
+                        @endif
+                        @if($teacher->is_top)
+                            <span class="badge-top ms-1">
+                                🏆 Top Professeur
+                            </span>
                         @endif
                     </p>
                 </div>

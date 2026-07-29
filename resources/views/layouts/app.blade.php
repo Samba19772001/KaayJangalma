@@ -163,6 +163,16 @@
             font-size: 1.6rem; font-weight: 700;
             border: 3px solid var(--kj-green);
         }
+
+        /* ── Badge Top Professeur ── */
+        .badge-top {
+            background: linear-gradient(135deg, #f5c518, #e6a800);
+            color: #333;
+            font-size: .72rem;
+            padding: .3rem .6rem;
+            border-radius: 20px;
+            font-weight: 700;
+        }
     </style>
 
     @stack('styles')
