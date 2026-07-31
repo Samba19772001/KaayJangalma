@@ -12,6 +12,10 @@ use App\Http\Controllers\NotificationController;
 
 // ─── Accueil ──────────────────────────────────────────────────────
 Route::get('/', fn() => view('welcome'))->name('home');
+
+Route::get('/contact', fn() => view('contact'))->name('contact');
+Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
+
 // ─── PayTech ──────────────────────────────────────────────────────
 Route::post('/paytech/ipn',     [\App\Http\Controllers\PayTechController::class, 'ipn'])->name('paytech.ipn');
 Route::get('/paytech/success',  [\App\Http\Controllers\PayTechController::class, 'success'])->name('paytech.success');

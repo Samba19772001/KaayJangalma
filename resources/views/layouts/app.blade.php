@@ -195,6 +195,11 @@
                         <i class="bi bi-search me-1"></i> Trouver un professeur
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('contact') }}">
+                        <i class="bi bi-headset me-1"></i> Contact
+                    </a>
+                </li>
             </ul>
             <div class="d-flex align-items-center gap-2">
                 @guest
@@ -335,6 +340,10 @@
 <footer class="mt-5 py-4 bg-white border-top">
     <div class="container text-center text-muted small">
         <p class="mb-1"><strong style="color:var(--kj-green)">KaayJangalma</strong> — La plateforme de cours à domicile au Sénégal</p>
+        <p class="mb-1">
+            <a href="{{ route('contact') }}" class="text-muted text-decoration-none small me-3">Contact</a>
+            <a href="{{ route('home') }}" class="text-muted text-decoration-none small">Accueil</a>
+        </p>
         <p class="mb-0">© {{ date('Y') }} Tous droits réservés</p>
     </div>
 </footer>
