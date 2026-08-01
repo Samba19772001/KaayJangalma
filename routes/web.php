@@ -16,6 +16,9 @@ Route::get('/', fn() => view('welcome'))->name('home');
 Route::get('/contact', fn() => view('contact'))->name('contact');
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
 
+Route::get('/politique-de-confidentialite', fn() => view('legal.privacy'))->name('privacy');
+Route::get('/conditions-generales', fn() => view('legal.terms'))->name('terms');
+
 // ─── PayTech ──────────────────────────────────────────────────────
 Route::post('/paytech/ipn',     [\App\Http\Controllers\PayTechController::class, 'ipn'])->name('paytech.ipn');
 Route::get('/paytech/success',  [\App\Http\Controllers\PayTechController::class, 'success'])->name('paytech.success');
