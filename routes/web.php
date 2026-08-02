@@ -109,6 +109,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/avis/{id}',       [AdminController::class, 'deleteReview'])->name('reviews.delete');
     Route::get('/paiements',          [AdminController::class, 'payments'])->name('payments');
     Route::patch('/paiements/{id}',   [AdminController::class, 'confirmPayment'])->name('payments.confirm');
+    Route::get('/utilisateurs',           [AdminController::class, 'users'])->name('users');
+    Route::patch('/utilisateurs/{id}/bloquer', [AdminController::class, 'toggleBlock'])->name('users.block');
+    Route::delete('/utilisateurs/{id}',   [AdminController::class, 'deleteUser'])->name('users.delete');
 });
 
 // ─── Profil public professeur (après les routes authentifiées) ────

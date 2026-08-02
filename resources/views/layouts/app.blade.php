@@ -339,12 +339,17 @@
 {{-- ── Footer ── --}}
 <footer class="mt-5 py-4 bg-white border-top">
     <div class="container text-center text-muted small">
-        <p class="mb-1"><strong style="color:var(--kj-green)">KaayJangalma</strong> — La plateforme de cours à domicile au Sénégal</p>
         <p class="mb-1">
-            <a href="{{ route('contact') }}" class="text-muted text-decoration-none small me-3">Contact</a>
-            <a href="{{ route('home') }}" class="text-muted text-decoration-none small">Accueil</a>
+            <strong style="color:var(--kj-green)">KaayJangalma</strong> —
+            La plateforme de cours à domicile au Sénégal
         </p>
-        <p class="mb-0">© {{ date('Y') }} Tous droits réservés</p>
+        <p class="mb-1">
+            <a href="{{ route('contact') }}" class="text-muted text-decoration-none me-3">Contact</a>
+            <a href="{{ route('privacy') }}" class="text-muted text-decoration-none me-3">Confidentialité</a>
+            <a href="{{ route('terms') }}" class="text-muted text-decoration-none me-3">CGU</a>
+            <a href="{{ route('home') }}" class="text-muted text-decoration-none">Accueil</a>
+        </p>
+        <p class="mb-0">© {{ date('Y') }} KaayJangalma — Tous droits réservés</p>
     </div>
 </footer>
 
