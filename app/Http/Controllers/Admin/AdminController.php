@@ -102,12 +102,12 @@ class AdminController extends Controller
         return view('admin.teacher-detail', compact('teacher'));
     }
 
-    public function payments()
+    public function payments(Request $request)
     {
-        $pending   = \App\Models\Subscription::with('teacher.user')
-                                            ->where('status', 'pending_payment')
-                                            ->latest()
-                                            ->get();
+        $pending = \App\Models\Subscription::with('teacher.user')
+                                        ->where('status', 'pending_payment')
+                                        ->latest()
+                                        ->get();
 
         $confirmed = \App\Models\Subscription::with('teacher.user', 'confirmedBy')
                                             ->where('status', 'active')
@@ -115,7 +115,42 @@ class AdminController extends Controller
                                             ->take(20)
                                             ->get();
 
-        return view('admin.payments', compact('pending', 'confirmed'));
+        // ── Statistiques de revenus ───────────────────────────────────
+        $periode     = $request->periode ?? 'month';
+        $dateDebut   = $request->date_debut ?? null;
+        $dateFin     = $request->date_fin ?? null;
+
+        $query = \App\Models\Subscription::where('status', 'active');
+
+        // Filtrer par période
+        if ($dateDebut && $dateFin) {
+            $query->whereBetween('payment_confirmed_at', [$dateDebut, $dateFin . ' 23:59:59']);
+        } elseif ($periode === 'week') {
+            $query->where('payment_confirmed_at', '>=', now()->startOfWeek());
+        } elseif ($periode === 'month') {
+            $query->where('payment_confirmed_at', '>=', now()->startOfMonth());
+        } elseif ($periode === 'year') {
+            $query->where('payment_confirmed_at', '>=', now()->startOfYear());
+        }
+
+        $stats = [
+            'total'      => $query->sum('amount'),
+            'count'      => $query->count(),
+            'quarterly'  => (clone $query)->where('plan', 'quarterly')->sum('amount'),
+            'biannual'   => (clone $query)->where('plan', 'biannual')->sum('amount'),
+            'annual'     => (clone $query)->where('plan', 'annual')->sum('amount'),
+        ];
+
+        // Revenus par mois (12 derniers mois)
+        $monthlyRevenue = \App\Models\Subscription::where('status', 'active')
+            ->where('payment_confirmed_at', '>=', now()->subMonths(12))
+            ->selectRaw('MONTH(payment_confirmed_at) as month, YEAR(payment_confirmed_at) as year, SUM(amount) as total')
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        return view('admin.payments', compact('pending', 'confirmed', 'stats', 'monthlyRevenue', 'periode', 'dateDebut', 'dateFin'));
     }
 
     public function confirmPayment(Request $request, $id)
@@ -170,5 +205,64 @@ class AdminController extends Controller
         }
 
         return back()->with('success', $msg);
+    }
+
+    // ─── Utilisateurs ─────────────────────────────────────────────────
+    public function users(Request $request)
+    {
+        $users = User::when($request->role, fn($q) => $q->where('role', $request->role))
+                    ->when($request->status === 'blocked', fn($q) => $q->where('is_blocked', true))
+                    ->when($request->search, fn($q) => $q->where('name', 'like', '%'.$request->search.'%')
+                                                        ->orWhere('phone', 'like', '%'.$request->search.'%'))
+                    ->latest()
+                    ->paginate(20);
+
+        return view('admin.users', compact('users'));
+    }
+
+    public function toggleBlock(Request $request, $id)
+    {
+        $request->validate(['block_reason' => 'nullable|string|max:500']);
+
+        $user = User::findOrFail($id);
+
+        // Empêcher de bloquer un admin
+        if ($user->isAdmin()) {
+            return back()->withErrors(['error' => 'Impossible de bloquer un administrateur.']);
+        }
+
+        $user->update([
+            'is_blocked'   => !$user->is_blocked,
+            'block_reason' => !$user->is_blocked ? $request->block_reason : null,
+        ]);
+
+        // Notification à l'utilisateur
+        \App\Models\Notification::create([
+            'user_id' => $user->id,
+            'type'    => $user->is_blocked ? 'account_blocked' : 'account_unblocked',
+            'data'    => json_encode([
+                'message' => $user->is_blocked
+                    ? 'Votre compte a été suspendu. Raison : ' . ($request->block_reason ?? 'Violation des CGU')
+                    : 'Votre compte a été réactivé. Vous pouvez vous connecter.',
+            ]),
+        ]);
+
+        $msg = $user->is_blocked ? 'Compte suspendu avec succès.' : 'Compte réactivé avec succès.';
+
+        return back()->with('success', $msg);
+    }
+
+    public function deleteUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Empêcher de supprimer un admin
+        if ($user->isAdmin()) {
+            return back()->withErrors(['error' => 'Impossible de supprimer un administrateur.']);
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'Utilisateur supprimé avec succès.');
     }
 }

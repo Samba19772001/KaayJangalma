@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'role',
-        'otp_code', 'otp_expires_at',
+        'otp_code', 'otp_expires_at', 'is_blocked', 'block_reason',
     ];
 
     protected $hidden = [
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'otp_expires_at'    => 'datetime',
         'password'          => 'hashed',
+        'is_blocked'        => 'boolean',
     ];
 
     // Relations

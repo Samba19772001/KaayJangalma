@@ -37,6 +37,7 @@
 @section('sidebar_content')
     <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
     <a href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+    <a href="{{ route('admin.users') }}"><i class="bi bi-people"></i> Utilisateurs</a>
     <a href="{{ route('admin.teachers') }}" class="active"><i class="bi bi-people"></i> Professeurs</a>
     <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
     <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>
@@ -57,6 +58,7 @@
             <div class="sidebar">
                 <a href="{{ route('home') }}" class="brand"><i class="bi bi-mortarboard-fill me-2"></i>KaayJangalma</a>
                 <a href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
+                <a href="{{ route('admin.users') }}"><i class="bi bi-people"></i> Utilisateurs</a>
                 <a href="{{ route('admin.teachers') }}" class="active"><i class="bi bi-people"></i> Professeurs</a>
                 <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
                 <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>

@@ -15,7 +15,18 @@ class RoleMiddleware
             return redirect()->route('auth.login');
         }
 
-        if (!in_array(Auth::user()->role, $roles)) {
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur est bloqué
+        if ($user->is_blocked) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('auth.login')
+                             ->withErrors(['login' => 'Votre compte a été suspendu. Raison : ' . ($user->block_reason ?? 'Violation des CGU') . '. Contactez le support.']);
+        }
+
+        if (!in_array($user->role, $roles)) {
             abort(403, 'Accès non autorisé.');
         }
 
