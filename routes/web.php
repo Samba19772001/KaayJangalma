@@ -112,6 +112,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/utilisateurs',           [AdminController::class, 'users'])->name('users');
     Route::patch('/utilisateurs/{id}/bloquer', [AdminController::class, 'toggleBlock'])->name('users.block');
     Route::delete('/utilisateurs/{id}',   [AdminController::class, 'deleteUser'])->name('users.delete');
+    Route::get('/revenus', [AdminController::class, 'revenue'])->name('revenue');
 });
 
 // ─── Profil public professeur (après les routes authentifiées) ────

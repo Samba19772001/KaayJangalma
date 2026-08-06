@@ -102,12 +102,12 @@ class AdminController extends Controller
         return view('admin.teacher-detail', compact('teacher'));
     }
 
-    public function payments(Request $request)
+    public function payments()
     {
-        $pending = \App\Models\Subscription::with('teacher.user')
-                                        ->where('status', 'pending_payment')
-                                        ->latest()
-                                        ->get();
+        $pending   = \App\Models\Subscription::with('teacher.user')
+                                            ->where('status', 'pending_payment')
+                                            ->latest()
+                                            ->get();
 
         $confirmed = \App\Models\Subscription::with('teacher.user', 'confirmedBy')
                                             ->where('status', 'active')
@@ -115,43 +115,60 @@ class AdminController extends Controller
                                             ->take(20)
                                             ->get();
 
-        // ── Statistiques de revenus ───────────────────────────────────
-        $periode     = $request->periode ?? 'month';
-        $dateDebut   = $request->date_debut ?? null;
-        $dateFin     = $request->date_fin ?? null;
-
-        $query = \App\Models\Subscription::where('status', 'active');
-
-        // Filtrer par période
-        if ($dateDebut && $dateFin) {
-            $query->whereBetween('payment_confirmed_at', [$dateDebut, $dateFin . ' 23:59:59']);
-        } elseif ($periode === 'week') {
-            $query->where('payment_confirmed_at', '>=', now()->startOfWeek());
-        } elseif ($periode === 'month') {
-            $query->where('payment_confirmed_at', '>=', now()->startOfMonth());
-        } elseif ($periode === 'year') {
-            $query->where('payment_confirmed_at', '>=', now()->startOfYear());
-        }
-
-        $stats = [
-            'total'      => $query->sum('amount'),
-            'count'      => $query->count(),
-            'quarterly'  => (clone $query)->where('plan', 'quarterly')->sum('amount'),
-            'biannual'   => (clone $query)->where('plan', 'biannual')->sum('amount'),
-            'annual'     => (clone $query)->where('plan', 'annual')->sum('amount'),
-        ];
-
-        // Revenus par mois (12 derniers mois)
-        $monthlyRevenue = \App\Models\Subscription::where('status', 'active')
-            ->where('payment_confirmed_at', '>=', now()->subMonths(12))
-            ->selectRaw('MONTH(payment_confirmed_at) as month, YEAR(payment_confirmed_at) as year, SUM(amount) as total')
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
-
-        return view('admin.payments', compact('pending', 'confirmed', 'stats', 'monthlyRevenue', 'periode', 'dateDebut', 'dateFin'));
+        return view('admin.payments', compact('pending', 'confirmed'));
     }
+   /* public function payments(Request $request)
+{
+    $pending = \App\Models\Subscription::with('teacher.user')
+                                       ->where('status', 'pending_payment')
+                                       ->latest()
+                                       ->get();
+
+    $confirmed = \App\Models\Subscription::with('teacher.user', 'confirmedBy')
+                                         ->where('status', 'active')
+                                         ->latest()
+                                         ->take(20)
+                                         ->get();
+
+    // ── Statistiques de revenus ───────────────────────────────────
+    $periode     = $request->periode ?? 'month';
+    $dateDebut   = $request->date_debut ?? null;
+    $dateFin     = $request->date_fin ?? null;
+
+    $query = \App\Models\Subscription::where('status', 'active');
+
+    // Filtrer par période
+    if ($dateDebut && $dateFin) {
+        $query->whereBetween('payment_confirmed_at', [$dateDebut, $dateFin . ' 23:59:59']);
+    } elseif ($periode === 'week') {
+        $query->where('payment_confirmed_at', '>=', now()->startOfWeek());
+    } elseif ($periode === 'month') {
+        $query->where('payment_confirmed_at', '>=', now()->startOfMonth());
+    } elseif ($periode === 'year') {
+        $query->where('payment_confirmed_at', '>=', now()->startOfYear());
+    }
+
+    $stats = [
+        'total'      => $query->sum('amount'),
+        'count'      => $query->count(),
+        'quarterly'  => (clone $query)->where('plan', 'quarterly')->sum('amount'),
+        'biannual'   => (clone $query)->where('plan', 'biannual')->sum('amount'),
+        'annual'     => (clone $query)->where('plan', 'annual')->sum('amount'),
+    ];
+
+    // Revenus par mois (12 derniers mois)
+    $monthlyRevenue = \App\Models\Subscription::where('status', 'active')
+        ->where('payment_confirmed_at', '>=', now()->subMonths(12))
+        ->selectRaw('MONTH(payment_confirmed_at) as month, YEAR(payment_confirmed_at) as year, SUM(amount) as total')
+        ->groupBy('year', 'month')
+        ->orderBy('year')
+        ->orderBy('month')
+        ->get();
+
+    return view('admin.payments', compact('pending', 'confirmed', 'stats', 'monthlyRevenue', 'periode', 'dateDebut', 'dateFin'));
+}*/
+
+
 
     public function confirmPayment(Request $request, $id)
     {
@@ -264,5 +281,76 @@ class AdminController extends Controller
         $user->delete();
 
         return back()->with('success', 'Utilisateur supprimé avec succès.');
+    }
+
+    public function revenue(Request $request)
+    {
+        $period    = $request->period ?? 'month';
+        $year      = $request->year ?? now()->year;
+        $month     = $request->month ?? now()->month;
+        $startDate = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+        $endDate   = $request->end_date ?? now()->format('Y-m-d');
+
+        // Revenus par période
+        $query = \App\Models\Subscription::where('status', 'active');
+
+        // Revenus du mois en cours
+        $revenueThisMonth = \App\Models\Subscription::where('status', 'active')
+            ->whereMonth('payment_confirmed_at', now()->month)
+            ->whereYear('payment_confirmed_at', now()->year)
+            ->sum('amount');
+
+        // Revenus de l'année en cours
+        $revenueThisYear = \App\Models\Subscription::where('status', 'active')
+            ->whereYear('payment_confirmed_at', now()->year)
+            ->sum('amount');
+
+        // Revenus total
+        $revenueTotal = \App\Models\Subscription::where('status', 'active')
+            ->sum('amount');
+
+        // Revenus par mois pour l'année sélectionnée
+        $revenueByMonth = \App\Models\Subscription::where('status', 'active')
+            ->whereYear('payment_confirmed_at', $year)
+            ->selectRaw('MONTH(payment_confirmed_at) as month, SUM(amount) as total, COUNT(*) as count')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        // Revenus par période personnalisée
+        $revenueCustom = \App\Models\Subscription::where('status', 'active')
+            ->whereBetween('payment_confirmed_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->sum('amount');
+
+        $countCustom = \App\Models\Subscription::where('status', 'active')
+            ->whereBetween('payment_confirmed_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->count();
+
+        // Revenus par plan
+        $revenueByPlan = \App\Models\Subscription::where('status', 'active')
+            ->selectRaw('plan, SUM(amount) as total, COUNT(*) as count')
+            ->groupBy('plan')
+            ->get();
+
+        // Derniers paiements
+        $lastPayments = \App\Models\Subscription::with('teacher.user')
+            ->where('status', 'active')
+            ->latest('payment_confirmed_at')
+            ->take(10)
+            ->get();
+
+        $months = [
+            1=>'Janvier', 2=>'Février', 3=>'Mars', 4=>'Avril',
+            5=>'Mai', 6=>'Juin', 7=>'Juillet', 8=>'Août',
+            9=>'Septembre', 10=>'Octobre', 11=>'Novembre', 12=>'Décembre'
+        ];
+
+        return view('admin.revenue', compact(
+            'revenueThisMonth', 'revenueThisYear', 'revenueTotal',
+            'revenueByMonth', 'revenueCustom', 'countCustom',
+            'revenueByPlan', 'lastPayments', 'months',
+            'year', 'startDate', 'endDate'
+        ));
     }
 }

@@ -42,6 +42,7 @@
     <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
     <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>
     <a href="{{ route('admin.payments') }}"><i class="bi bi-credit-card"></i> Paiements</a>
+    <a href="{{ route('admin.revenue') }}"><i class="bi bi-graph-up"></i> Revenus</a>
     <hr class="sidebar-divider">
     <form action="{{ route('auth.logout') }}" method="POST">
         @csrf
@@ -63,6 +64,7 @@
                 <a href="{{ route('admin.subjects') }}"><i class="bi bi-book"></i> Matières</a>
                 <a href="{{ route('admin.reviews') }}"><i class="bi bi-star"></i> Avis</a>
                 <a href="{{ route('admin.payments') }}"><i class="bi bi-credit-card"></i> Paiements</a>
+                <a href="{{ route('admin.revenue') }}"><i class="bi bi-graph-up"></i> Revenus</a>
                 <hr class="sidebar-divider">
                 <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
